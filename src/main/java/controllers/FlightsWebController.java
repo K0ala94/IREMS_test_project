@@ -31,7 +31,7 @@ public class FlightsWebController {
 	private long biggestDelayInMins;
 	
 	public double getAverageDelay(){
-		return flightService.getAverageDelayInMinutes();
+		return flightService.getAverageDelayInMinutesParalell();
 	}
 	
 	@Logged

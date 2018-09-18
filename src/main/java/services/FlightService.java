@@ -7,10 +7,14 @@ import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
@@ -26,6 +30,8 @@ public class FlightService {
 	
 	@Inject
 	private FlightFacade flightRepository;
+	@Resource
+	private ManagedExecutorService executor;
 
 	@Interceptors(LoggingInterceptor.class)
 	public List<Flight> getAllFlightsList(){
@@ -100,6 +106,48 @@ public class FlightService {
 		
 		return averageDelay / DateTimeUtil.MILIS_IN_MIN;
 	}
+	
+	@Interceptors(LoggingInterceptor.class)
+	public double getAverageDelayInMinutesParalell(){
+		
+		double averageDelay = 0;
+		List<Flight> flights = flightRepository.findAllFlights();
+		
+		//separate the flights into two equivalent halves
+		List<Flight> flightsPart1 = new ArrayList<>();
+		List<Flight> flightsPart2 = new ArrayList<>();
+		for(int i = 0; i < flights.size(); ++i){
+			if(i < flights.size() /2){
+				flightsPart1.add(flights.get(i));
+			}
+			else{
+				flightsPart2.add(flights.get(i));
+			}
+		}
+		
+		//executing task in two threads
+		Future<Double> avgDelay1 = executor.submit( new DelayCounterWorker(flightsPart1));
+		Future<Double> avgDelay2 = executor.submit( new DelayCounterWorker(flightsPart2));
+		
+		//if any of the averages is zero then the division messes up the result therefore cases are separated
+		try {
+			if(avgDelay1.get() == 0){
+				averageDelay = avgDelay2.get();
+			}
+			else if(avgDelay2.get() == 0){
+				averageDelay = avgDelay1.get();
+			}
+			else{
+				averageDelay = (avgDelay1.get() + avgDelay2.get()) / 2;
+			}
+		} catch (InterruptedException | ExecutionException e) {
+			logger.log(Level.INFO, "Paralell delay calculation was interupted" + e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return averageDelay / DateTimeUtil.MILIS_IN_MIN;
+	}
+	
 	
 	@Interceptors(LoggingInterceptor.class)
 	public Flight getFlightWithBiggestDelay(){
