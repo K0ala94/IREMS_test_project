@@ -65,17 +65,60 @@
 					<th>#{texts.arrival}</th>
 				</tr>
 				<ui:repeat var="flight" value="#{flightsWebController.allFlightsList}">
-					<tr>
-						<td>#{flight.id}</td>
-						<td>#{flight.destination}</td>
-						<td>#{flight.from}</td>
-						<td>#{flight.departure}</td>
-						<td>#{flight.arrival}</td>
-						
-					</tr>
+					<h:panelGroup rendered="#{flightsWebController.isFlightDelayed(flight)}">
+						<tr style="background-color: red">
+							<td>#{flight.id}</td>
+							<td>#{flight.destination}</td>
+							<td>#{flight.from}</td>
+							<td>#{flight.departure}</td>
+							<td>#{flight.arrival}</td>
+							<td>
+								<h:commandLink action="#{flightsWebController.preEdit(flight)}" value="#{texts.edit}" />
+							</td>
+							<td>
+								<h:commandLink action="#{flightsWebController.deleteFlight(flight)}" value="#{texts.delete}" />
+							</td>
+						</tr>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{!flightsWebController.isFlightDelayed(flight) and !flight.arrived}">
+						<tr>
+							<td>#{flight.id}</td>
+							<td>#{flight.destination}</td>
+							<td>#{flight.from}</td>
+							<td>#{flight.departure}</td>
+							<td>#{flight.arrival}</td>
+							<td>
+								<h:commandLink action="#{flightsWebController.preEdit(flight)}" value="#{texts.edit}" />
+							</td>
+							<td>
+								<h:commandLink action="#{flightsWebController.deleteFlight(flight)}" value="#{texts.delete}" />
+							</td>
+						</tr>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{flight.arrived}">
+						<tr style="background-color: green">
+							<td>#{flight.id}</td>
+							<td>#{flight.destination}</td>
+							<td>#{flight.from}</td>
+							<td>#{flight.departure}</td>
+							<td>#{flight.arrival}</td>
+							<td>
+								<h:commandLink action="#{flightsWebController.preEdit(flight)}" value="#{texts.edit}" />
+							</td>
+							<td>
+								<h:commandLink action="#{flightsWebController.deleteFlight(flight)}" value="#{texts.delete}" />
+							</td>
+						</tr>
+					</h:panelGroup>
+					
+				
 				</ui:repeat>
 			</thead>
 		</table>
+		<br/>
+		<div>
+			<h:commandButton action="#{flightsWebController.preCreate()}" value="add flight" />
+		</div>
 	</h:form>
 </body> 
 </html>

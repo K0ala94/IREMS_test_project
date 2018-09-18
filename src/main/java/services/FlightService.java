@@ -26,4 +26,34 @@ public class FlightService {
 		
 		return flights;
 	}
+	
+	public void createFlight(Flight flight){
+		
+		flight.setArrived(false);
+		flightRepository.create(flight);
+	}
+	
+	public boolean isFlightDelayed(Flight flight){
+		
+		if(flight.getArrival().isBefore(LocalDateTime.now()) && !flight.isArrived()){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	public void updateFlight(Flight flightToUpdate){
+		
+		flightRepository.update(flightToUpdate);
+	}
+	
+	public void deleteFlight(Flight flightToDelet){
+		flightRepository.remove(flightToDelet);
+	}
+	
+	public int calculateAverageDelayInMinutes(){
+		
+		return 0;
+	}
 }

@@ -9,7 +9,7 @@
 	<h1>#{texts.title}</h1>
 	
 	
-	<h:form>
+	<ui:remove><h:form>
 		<h:dataTable value="#{flightsWebController.allFlightsDataModel}" var="flight" 
 			StyleClass="order-table"
   			headerClass="order-table-header"
@@ -52,27 +52,73 @@
 		</h:dataTable>
 		<h:messages/>
 	</h:form>
+	</ui:remove>
 	
-	<table>
-		<thead>
-			<tr>
-				<th>flight id</th>
-				<th>destination</th>
-				<th>from</th>
-				<th>departure time</th>
-				<th>estimated arrival time</th>
-			</tr>
-			<ui:repeat var="flight" value="#{flightsWebController.allFlightsList}">
+	<h:form>
+		<table>
+			<thead>
 				<tr>
-					<td>#{flight.id}</td>
-					<td>#{flight.destination}</td>
-					<td>#{flight.from}</td>
-					<td>#{flight.departure}</td>
-					<td>#{flight.arrival}</td>
-					
+					<th>#{texts.flight_id}</th>
+					<th>#{texts.dest}</th>
+					<th>#{texts.from}</th>
+					<th>#{texts.departure}</th>
+					<th>#{texts.arrival}</th>
 				</tr>
-			</ui:repeat>
-		</thead>
-	</table>
+				<ui:repeat var="flight" value="#{flightsWebController.allFlightsList}">
+					<h:panelGroup rendered="#{flightsWebController.isFlightDelayed(flight)}">
+						<tr style="background-color: red">
+							<td>#{flight.id}</td>
+							<td>#{flight.destination}</td>
+							<td>#{flight.from}</td>
+							<td>#{flight.departure}</td>
+							<td>#{flight.arrival}</td>
+							<td>
+								<h:commandLink action="#{flightsWebController.preEdit(flight)}" value="#{texts.edit}" />
+							</td>
+							<td>
+								<h:commandLink action="#{flightsWebController.deleteFlight(flight)}" value="#{texts.delete}" />
+							</td>
+						</tr>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{!flightsWebController.isFlightDelayed(flight) and !flight.arrived}">
+						<tr>
+							<td>#{flight.id}</td>
+							<td>#{flight.destination}</td>
+							<td>#{flight.from}</td>
+							<td>#{flight.departure}</td>
+							<td>#{flight.arrival}</td>
+							<td>
+								<h:commandLink action="#{flightsWebController.preEdit(flight)}" value="#{texts.edit}" />
+							</td>
+							<td>
+								<h:commandLink action="#{flightsWebController.deleteFlight(flight)}" value="#{texts.delete}" />
+							</td>
+						</tr>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{flight.arrived}">
+						<tr style="background-color: green">
+							<td>#{flight.id}</td>
+							<td>#{flight.destination}</td>
+							<td>#{flight.from}</td>
+							<td>#{flight.departure}</td>
+							<td>#{flight.arrival}</td>
+							<td>
+								<h:commandLink action="#{flightsWebController.preEdit(flight)}" value="#{texts.edit}" />
+							</td>
+							<td>
+								<h:commandLink action="#{flightsWebController.deleteFlight(flight)}" value="#{texts.delete}" />
+							</td>
+						</tr>
+					</h:panelGroup>
+					
+				
+				</ui:repeat>
+			</thead>
+		</table>
+		<br/>
+		<div>
+			<h:commandButton action="#{flightsWebController.preCreate()}" value="add flight" />
+		</div>
+	</h:form>
 </body> 
 </html>

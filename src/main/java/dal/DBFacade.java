@@ -25,6 +25,7 @@ public abstract class DBFacade<T> {
 	
 	public void remove(T entity)
 	{
+		//merge is neccesary becaus otherwise entity is in deteched state so it needs to be attached to current persistence context
 		getEm().remove(getEm().merge(entity));
 	}
 	
