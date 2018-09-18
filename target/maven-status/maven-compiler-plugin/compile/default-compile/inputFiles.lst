@@ -1,6 +1,11 @@
+C:\Gergo\Java-Projects\IREMS_test_project\IREMS_test\src\main\java\interceptors\LoggingInterceptorCDI.java
 C:\Gergo\Java-Projects\IREMS_test_project\IREMS_test\src\main\java\services\FlightService.java
+C:\Gergo\Java-Projects\IREMS_test_project\IREMS_test\src\main\java\entities\LogMessage.java
 C:\Gergo\Java-Projects\IREMS_test_project\IREMS_test\src\main\java\controllers\FlightsWebController.java
 C:\Gergo\Java-Projects\IREMS_test_project\IREMS_test\src\main\java\dal\FlightFacade.java
+C:\Gergo\Java-Projects\IREMS_test_project\IREMS_test\src\main\java\interceptors\Logged.java
+C:\Gergo\Java-Projects\IREMS_test_project\IREMS_test\src\main\java\dal\LogFacade.java
+C:\Gergo\Java-Projects\IREMS_test_project\IREMS_test\src\main\java\interceptors\LoggingInterceptor.java
 C:\Gergo\Java-Projects\IREMS_test_project\IREMS_test\src\main\java\entities\Flight.java
 C:\Gergo\Java-Projects\IREMS_test_project\IREMS_test\src\main\java\utility\DateTimeUtil.java
 C:\Gergo\Java-Projects\IREMS_test_project\IREMS_test\src\main\java\dal\DBFacade.java

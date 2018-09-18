@@ -66,7 +66,7 @@
 				</tr>
 				<ui:repeat var="flight" value="#{flightsWebController.allFlightsList}">
 					<h:panelGroup rendered="#{flightsWebController.isFlightDelayed(flight)}">
-						<tr style="background-color: red">
+						<tr style="background-color: #eb7272">
 							<td>#{flight.id}</td>
 							<td>#{flight.destination}</td>
 							<td>#{flight.from}</td>
@@ -96,7 +96,7 @@
 						</tr>
 					</h:panelGroup>
 					<h:panelGroup rendered="#{flight.arrived}">
-						<tr style="background-color: green">
+						<tr style="background-color: #d8ffbb">
 							<td>#{flight.id}</td>
 							<td>#{flight.destination}</td>
 							<td>#{flight.from}</td>
@@ -120,5 +120,18 @@
 			<h:commandButton action="#{flightsWebController.preCreate()}" value="add flight" />
 		</div>
 	</h:form>
+	
+	<h3>
+		<h:outputLabel value="#{texts.alltimeAvg}" />
+		<h:outputText value="#{flightsWebController.averageDelay}" />
+	</h3>
+	
+	<h3>
+		<h:outputLabel value="#{texts.biggestDelay}"/>
+	</h3>
+	<p>flight id: #{flightsWebController.flightWithBiggestDelay.id}</p>
+	<p>towards: #{flightsWebController.flightWithBiggestDelay.destination}</p>
+	<p>current delay: #{flightsWebController.biggestDelayInMins} mins</p>
+	
 </body> 
 </html>

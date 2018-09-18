@@ -11,6 +11,7 @@ import javax.faces.model.ListDataModel;
 import javax.inject.Named;
 
 import entities.Flight;
+import interceptors.Logged;
 import services.FlightService;
 import utility.DateTimeUtil;
 
@@ -27,9 +28,19 @@ public class FlightsWebController {
 	private Flight flightToEdit;
 	//indicates wether the user is editing a flight (used in getNewArrivalTime for date conversion)
 	private boolean edit;
+	private long biggestDelayInMins;
 	
-	public String test(){
-		return "hello irems";
+	public double getAverageDelay(){
+		return flightService.getAverageDelayInMinutes();
+	}
+	
+	@Logged
+	public Flight getFlightWithBiggestDelay(){
+		
+		Flight lateFlight = flightService.getFlightWithBiggestDelay();
+		biggestDelayInMins = DateTimeUtil.millisecondsBetween(LocalDateTime.now(), lateFlight.getArrival()) / DateTimeUtil.MILIS_IN_MIN;
+		
+		return lateFlight;
 	}
 	
 	//determines whether the flight has surpassed its arrival time and has not yet landed
@@ -38,6 +49,7 @@ public class FlightsWebController {
 		return flightService.isFlightDelayed(flight);
 	}
 	
+	@Logged
 	public String createNewFlight(){
 		
 		flightService.createFlight(newFlight);
@@ -61,6 +73,7 @@ public class FlightsWebController {
 		return "edit_flight?faces-redirect=true";
 	}
 	
+	@Logged
 	public String editFlight(){
 		
 		flightService.updateFlight(flightToEdit);
@@ -69,6 +82,7 @@ public class FlightsWebController {
 		return "flight_browser?faces-redirect=true";
 	}
 	
+	@Logged
 	public String deleteFlight(Flight flightToDelete){
 		
 		flightService.deleteFlight(flightToDelete);
@@ -76,6 +90,7 @@ public class FlightsWebController {
 	}
 
 	//loads flight data from backend service
+	@Logged
 	public List<Flight> getAllFlightsList() {
 		
 		allFlightsList = flightService.getAllFlightsList();
@@ -146,6 +161,14 @@ public class FlightsWebController {
 
 	public void setFlightToEdit(Flight flightToEdit) {
 		this.flightToEdit = flightToEdit;
+	}
+
+	public long getBiggestDelayInMins() {
+		return biggestDelayInMins;
+	}
+
+	public void setBiggestDelayInMins(long biggestDelayInMins) {
+		this.biggestDelayInMins = biggestDelayInMins;
 	}
 	
 }
