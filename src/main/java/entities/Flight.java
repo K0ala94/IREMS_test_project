@@ -1,35 +1,39 @@
 package entities;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
+@Table(schema="public", name="FLIGHTS")
 public class Flight {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
 	
-	@Column(name="from")
+	@Column(name="start_location")
 	private String from;
 	
 	@Column(name="destination")
 	private String destination;
 	
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="departure_time")
-	private Date departure;
+	private LocalDateTime departure;
 	
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="arrival_time")
-	private Date arrival;
+	private LocalDateTime arrival;
+	
+	@Column(name = "arrived")
+	private boolean arrived;
 
 	public long getId() {
 		return id;
@@ -55,20 +59,28 @@ public class Flight {
 		this.destination = destination;
 	}
 
-	public Date getDeparture() {
+	public LocalDateTime getDeparture() {
 		return departure;
 	}
 
-	public void setDeparture(Date departure) {
+	public void setDeparture(LocalDateTime departure) {
 		this.departure = departure;
 	}
 
-	public Date getArrival() {
+	public LocalDateTime getArrival() {
 		return arrival;
 	}
 
-	public void setArrival(Date arrival) {
+	public void setArrival(LocalDateTime arrival) {
 		this.arrival = arrival;
+	}
+
+	public boolean isArrived() {
+		return arrived;
+	}
+
+	public void setArrived(boolean arrived) {
+		this.arrived = arrived;
 	}
 	
 	

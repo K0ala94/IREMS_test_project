@@ -6,6 +6,76 @@
 
 <h:head></h:head> 
 <body> 
-	<h1>#{flightsWebController.test()}</h1>
+	<h1>#{texts.title}</h1>
+	
+	
+	<ui:remove><h:form>
+		<h:dataTable value="#{flightsWebController.allFlightsDataModel}" var="flight" 
+			StyleClass="order-table"
+  			headerClass="order-table-header"
+  			rowClasses="order-table-odd-row,order-table-even-row"  
+  			style="backgorund-color:red">
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="flight ID" />
+				</f:facet>
+				<h:outputLabel value="#{flight.id}" rendered = "true" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="destination" />
+				</f:facet>
+				<h:outputText value="#{flight.destination}"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="from" />
+				</f:facet>
+				<h:outputLabel value="#{flight.from}"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="departure time" />
+				</f:facet>
+				<h:outputLabel value="#{flight.departure}$"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="estimated arrival time" />
+				</f:facet>
+				<h:outputLabel value="#{flight.arrival}$"/>
+			</h:column>
+		<ui:remove>	<h:column rendered="#{!(userController.currentUser.account eq null)}">
+				<h:commandLink action="#{shopController.purchuse}" value="purchase" rendered="#{!shopController.own and !item.bought and !userController.currentUser.admin}" />
+				<h:commandLink action="#{shopController.preEdit}" value="edit" rendered="#{shopController.own and !item.bought or userController.currentUser.admin and !item.bought}" />
+			</h:column></ui:remove>
+		</h:dataTable>
+		<h:messages/>
+	</h:form>
+	</ui:remove>
+	
+	<h:form>
+		<table>
+			<thead>
+				<tr>
+					<th>#{texts.flight_id}</th>
+					<th>#{texts.dest}</th>
+					<th>#{texts.from}</th>
+					<th>#{texts.departure}</th>
+					<th>#{texts.arrival}</th>
+				</tr>
+				<ui:repeat var="flight" value="#{flightsWebController.allFlightsList}">
+					<tr>
+						<td>#{flight.id}</td>
+						<td>#{flight.destination}</td>
+						<td>#{flight.from}</td>
+						<td>#{flight.departure}</td>
+						<td>#{flight.arrival}</td>
+						
+					</tr>
+				</ui:repeat>
+			</thead>
+		</table>
+	</h:form>
 </body> 
 </html>
