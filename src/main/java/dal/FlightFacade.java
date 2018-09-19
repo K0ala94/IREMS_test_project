@@ -33,8 +33,9 @@ public class FlightFacade extends DBFacade<Flight> {
 	public List findAllFlights() {
 		
 		Query query = em.createQuery(ALL_FLIGHTS_QUERY);
-		
 		return query.getResultList();
 	}
+	
+	
 
 }

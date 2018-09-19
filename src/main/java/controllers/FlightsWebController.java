@@ -38,8 +38,12 @@ public class FlightsWebController {
 	public Flight getFlightWithBiggestDelay(){
 		
 		Flight lateFlight = flightService.getFlightWithBiggestDelay();
-		biggestDelayInMins = DateTimeUtil.millisecondsBetween(LocalDateTime.now(), lateFlight.getArrival()) / DateTimeUtil.MILIS_IN_MIN;
-		
+		if(lateFlight != null){
+			biggestDelayInMins = DateTimeUtil.millisecondsBetween(LocalDateTime.now(), lateFlight.getArrival()) / DateTimeUtil.MILIS_IN_MIN;
+		}
+		else{
+			lateFlight = new Flight();
+		}
 		return lateFlight;
 	}
 	

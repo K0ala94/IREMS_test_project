@@ -11,6 +11,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
@@ -32,14 +34,16 @@ public class FlightService {
 	private FlightFacade flightRepository;
 	@Resource
 	private ManagedExecutorService executor;
-
+	
+	
 	@Interceptors(LoggingInterceptor.class)
 	public List<Flight> getAllFlightsList(){
 		
 		List<Flight> flights = flightRepository.findAllFlights();
 		
-		flights.stream()
-			   .sorted( (f1,f2) -> (f1.getDeparture().isBefore(f2.getDeparture()) ? 1 : -1));
+		flights = flights.stream()
+			   .sorted( (f1,f2) -> (f1.getDeparture().isBefore(f2.getDeparture()) ? -1 : 1))
+			   .collect(Collectors.toList());
 		
 		flights.stream().forEach(this::logFlight);
 			   
@@ -98,7 +102,7 @@ public class FlightService {
 							      .getAsDouble();
 		}catch (NoSuchElementException e) {
 			logger.log(Level.INFO, "unable to calculate average delay");
-			e.printStackTrace();
+			//e.printStackTrace();
 			averageDelay = 0;
 		}
 		
@@ -142,7 +146,6 @@ public class FlightService {
 			}
 		} catch (InterruptedException | ExecutionException e) {
 			logger.log(Level.INFO, "Paralell delay calculation was interupted" + e.getMessage());
-			e.printStackTrace();
 		}
 		
 		return averageDelay / DateTimeUtil.MILIS_IN_MIN;
@@ -154,19 +157,42 @@ public class FlightService {
 		
 		List<Flight> flights = flightRepository.findAllFlights();
 		
-		//compares all the delayed flights by their delay  ( using functional interface of Comparator)
-		Flight flightWBigestDelay = flights.stream()
-			   .filter(flight -> isFlightDelayed(flight))
-			   .max((f1,f2) -> (int)(DateTimeUtil.millisecondsBetween(LocalDateTime.now(), f1.getArrival()) 
-					   				- DateTimeUtil.millisecondsBetween(LocalDateTime.now(), f2.getArrival())))
-			   .get();
+		Flight flightWBigestDelay = null;
+		try{
+			//compares all the delayed flights by their delay  ( using functional interface of Comparator)
+			flightWBigestDelay = flights.stream()
+				   .filter(flight -> isFlightDelayed(flight))
+				   .max((f1,f2) -> (int)(DateTimeUtil.millisecondsBetween(LocalDateTime.now(), f1.getArrival()) 
+						   				- DateTimeUtil.millisecondsBetween(LocalDateTime.now(), f2.getArrival())))
+				   .get();
+			logger.log(Level.INFO, "Found flight with biggest delay, flight id : " + flightWBigestDelay.getId());
+		}catch (NoSuchElementException e) {
+			logger.log(Level.INFO, "unable to calculate most delayed flight due to lack of delays");
+		}
 		
-		logger.log(Level.INFO, "Found flight with biggest delay, flight id : " + flightWBigestDelay.getId());
+		
 		
 		return flightWBigestDelay;
 	}
 	
+	//Not wired to the frontend, tests available
+	public List<Flight> filterFlightsByDepartureTime(LocalDateTime time, int intervalInHours){
+		
+		List<Flight> allFlights = flightRepository.findAllFlights();
+		LocalDateTime intervalBeforeSpecifiedTime = time.minus(intervalInHours, ChronoUnit.HOURS);
+		LocalDateTime intervalAfterSpecifiedTime = time.plus(intervalInHours, ChronoUnit.HOURS);
+		return allFlights.stream()
+				  .filter( flight -> flight.getDeparture().isAfter(intervalBeforeSpecifiedTime)
+						  			 && flight.getDeparture().isBefore(intervalAfterSpecifiedTime))
+				  .collect(Collectors.toList());
+	}
+	
 	private void logFlight(Flight flight){
 		logger.log(Level.INFO, flight.getFrom() + ":"  + flight.getDestination() + ":"  + flight.getId());
+	}
+	
+	//this is solely for testing purposes (couldnt inject the mock)
+	public void setFlightRepo(FlightFacade repo){
+		flightRepository = repo;
 	}
 }
